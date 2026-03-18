@@ -143,7 +143,7 @@ export const RegistrationForm = () => {
         type="submit"
         disabled={isSubmitting}
         className={cn(
-          "w-full brutal-button bg-black text-white py-4 text-xl",
+          "w-full bg-black text-white py-4 text-xl font-bold cursor-pointer border-4 border-black",
           isSubmitting && "opacity-50 cursor-not-allowed"
         )}
       >
