@@ -140,14 +140,11 @@ export const RegistrationForm = () => {
       )}
 
       <button
-        type="submit"
-        disabled={isSubmitting}
-        className={cn(
-          "w-full bg-black text-white py-4 text-xl font-bold cursor-pointer border-4 border-black",
-          isSubmitting && "opacity-50 cursor-not-allowed"
-        )}
-      >
-        {isSubmitting ? 'שולח...' : 'שלח הרשמה'}
+      type="submit"
+      disabled={isSubmitting}
+      style={{ backgroundColor: '#000', color: '#fff', width: '100%', padding: '16px', fontSize: '1.25rem', fontWeight: 'bold', cursor: 'pointer', border: '4px solid #000' }}
+    >
+      {isSubmitting ? 'שולח...' : 'שלח הרשמה'}
       </button>
     </form>
   );
