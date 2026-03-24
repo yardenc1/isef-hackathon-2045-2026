@@ -228,11 +228,11 @@ export default function App() {
 
           <div className="flex items-center justify-center gap-2 md:gap-3">
             {[
-              { label : 'ימים', value : timeLeft.days },
-              { label : 'שעות', value : timeLeft.hours },
-              { label : 'דקות', value : timeLeft.minutes },
-              { label : 'שניות', value : timeLeft.seconds },
-            ].map((item) => (
+        { label : 'שניות', value : timeLeft.seconds },
+        { label : 'דקות', value : timeLeft.minutes },
+        { label : 'שעות', value : timeLeft.hours },
+        { label : 'ימים', value : timeLeft.days },
+      ].map((item) => (
               <div
                 key={item.label}
                 className="min-w-[70px] rounded-2xl border px-3 py-2 text-center"
