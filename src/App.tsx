@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import {
-  Clock,
   HeartPulse,
   GraduationCap,
   ShieldCheck,
@@ -16,16 +15,16 @@ const ISEF_BLUE = '#1B2F6E';
 const ISEF_ORANGE = '#F5821F';
 
 const heroImages = [
-  `${import.meta.env.BASE_URL}images/event-1.jpeg`,
-  `${import.meta.env.BASE_URL}images/event-2.jpeg`,
-  `${import.meta.env.BASE_URL}images/event-3.jpeg`,
-  `${import.meta.env.BASE_URL}images/event-4.jpeg`,
+  '/images/event-1.jpeg',
+  '/images/event-2.jpeg',
+  '/images/event-3.jpeg',
+  '/images/event-4.jpeg',
 ];
 
 const aboutImages = [
-  `${import.meta.env.BASE_URL}images/event-2.jpeg`,
-  `${import.meta.env.BASE_URL}images/event-3.jpeg`,
-  `${import.meta.env.BASE_URL}images/event-4.jpeg`,
+  '/images/event-2.jpeg',
+  '/images/event-3.jpeg',
+  '/images/event-4.jpeg',
 ];
 
 const challenges = [
@@ -124,7 +123,6 @@ function useCountdown(targetDate : Date) {
         hours : 0,
         minutes : 0,
         seconds : 0,
-        completed : true,
       };
     }
 
@@ -133,44 +131,53 @@ function useCountdown(targetDate : Date) {
       hours : Math.floor((distance / (1000 * 60 * 60)) % 24),
       minutes : Math.floor((distance / (1000 * 60)) % 60),
       seconds : Math.floor((distance / 1000) % 60),
-      completed : false,
     };
   };
 
   const [timeLeft, setTimeLeft] = useState(calculate());
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
+    const intervalId = window.setInterval(() => {
       setTimeLeft(calculate());
     }, 1000);
 
-    return () => window.clearInterval(interval);
+    return () => window.clearInterval(intervalId);
   }, []);
 
   return timeLeft;
 }
 
-function ImageCarousel({ images, interval = 4500, className = '' } : { images : string[]; interval? : number; className? : string }) {
+function ImageCarousel({
+  images,
+  interval = 4500,
+  className = '',
+} : {
+  images : string[];
+  interval? : number;
+  className? : string;
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     if (!images.length) return;
 
-    const id = window.setInterval(() => {
+    const intervalId = window.setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % images.length);
     }, interval);
 
-    return () => window.clearInterval(id);
+    return () => window.clearInterval(intervalId);
   }, [images, interval]);
 
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    <div className={`relative h-full w-full overflow-hidden ${className}`}>
       {images.map((src, index) => (
         <img
-          key={src}
+          key={`${src}-${index}`}
           src={src}
           alt=""
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${index === activeIndex ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 h-full w-full object-cover transition-all duration-1000 ${
+            index === activeIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+          }`}
         />
       ))}
     </div>
@@ -190,7 +197,6 @@ export default function App() {
 
       const rect = timelineRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-
       const total = rect.height + viewportHeight;
       const passed = viewportHeight - rect.top;
       const progress = Math.max(0, Math.min(1, passed / total));
@@ -243,14 +249,14 @@ export default function App() {
       </div>
 
       <header className="relative min-h-[92vh] overflow-hidden" style={{ backgroundColor : ISEF_BLUE }}>
-        <ImageCarousel images={heroImages} className="absolute inset-0" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/45 to-[#1B2F6E]/90" />
+        <ImageCarousel images={heroImages} className="absolute inset-0 z-0" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/35 via-black/30 to-[#1B2F6E]/75" />
 
         <div className="absolute right-4 top-6 z-20 md:right-8">
           <img src="/logos/isef-color.png" alt="ISEF Logo" className="h-14 object-contain md:h-16" />
         </div>
 
-        <div className="relative z-10 container mx-auto flex min-h-[92vh] items-center px-4 py-14">
+        <div className="relative z-20 container mx-auto flex min-h-[92vh] items-center px-4 py-14">
           <div className="mx-auto max-w-5xl text-center">
             <motion.div initial={{ opacity : 0, y : 24 }} animate={{ opacity : 1, y : 0 }} transition={{ duration : 0.8 }}>
               <span
@@ -338,17 +344,23 @@ export default function App() {
               </div>
             </div>
 
-            <div className="relative h-[380px] overflow-hidden rounded-[28px] border-4 md:h-[520px]" style={{ borderColor : ISEF_BLUE, boxShadow : `12px 12px 0 ${ISEF_ORANGE}` }}>
-              <ImageCarousel images={aboutImages} interval={4000} className="absolute inset-0" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+            <div
+              className="relative h-[380px] overflow-hidden rounded-[28px] border-4 md:h-[520px]"
+              style={{ borderColor : ISEF_BLUE, boxShadow : `12px 12px 0 ${ISEF_ORANGE}` }}
+            >
+              <ImageCarousel images={aboutImages} interval={4000} className="absolute inset-0 z-0" />
+              <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/15 via-transparent to-transparent" />
             </div>
           </div>
         </div>
       </section>
 
-
       <section className="py-16 md:py-20" style={{ backgroundColor : ISEF_BLUE }}>
         <div className="container mx-auto px-4">
+          <div className="mb-12 text-center">
+            <h2 className="text-5xl font-black text-white md:text-6xl">לו״ז הדרך להאקתון</h2>
+          </div>
+
           <div ref={timelineRef} className="relative mx-auto max-w-4xl">
             <div className="absolute right-[17px] top-0 h-full w-1 rounded-full bg-white/15 md:right-1/2 md:translate-x-1/2" />
             <div
