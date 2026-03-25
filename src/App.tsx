@@ -182,7 +182,7 @@ export default function App() {
       <div className="sticky top-0 z-50 border-b backdrop-blur-md" style={{ backgroundColor : 'rgba(27, 47, 110, 0.94)', borderColor : 'rgba(255,255,255,0.08)' }}>
         <div className="container mx-auto flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
           <div className="text-center md:text-right">
-            <div className="text-base font-black tracking-wide text-white md:text-lg">ההרשמה ל-ISEF 2050 נסגרת ב-6.5 בחצות</div>
+            <div className="text-base font-black tracking-wide text-white md:text-lg">ההרשמה ל-ISEF 2050 נסגרת ב-1.5 בחצות</div>
             <div className="text-sm text-blue-200 md:text-base">מומלץ למלא את הטופס מוקדם כדי להבטיח מקום</div>
           </div>
 
