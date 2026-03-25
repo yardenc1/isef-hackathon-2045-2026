@@ -128,7 +128,7 @@ const infoCards = [
   },
   {
     title : 'איך ההאקתון עובד?',
-    desc : 'נרשמים בטופס, מגיעים לאירוע המקדים ב-1.5 שבו ייבנו צוותים וייעשו חיבורים למי שמגיעים בלי צוות, ואז מגיעים לאירוע המרכזי ב-28.5 כדי לבנות פתרון ולהציג אותו.',
+    desc : 'נרשמים בטופס, מגיעים לאירוע המקדים ב-6.5 שבו ייבנו צוותים וייעשו חיבורים למי שמגיעים בלי צוות, ואז מגיעים לאירוע המרכזי ב-28.5 כדי לבנות פתרון ולהציג אותו.',
   },
 ];
 
@@ -266,7 +266,7 @@ export default function App() {
       >
         <div className="container mx-auto flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
           <div className="text-center md:text-right">
-            <div className="text-base font-black tracking-wide text-white md:text-lg">ההרשמה ל-ISEF 2050 נסגרת ב-6.5 בחצות</div>
+            <div className="text-base font-black tracking-wide text-white md:text-lg">ההרשמה ל-ISEF 2050 נסגרת ב-1.5 בחצות</div>
             <div className="text-sm text-blue-200 md:text-base">מומלץ למלא את הטופס מוקדם כדי להבטיח מקום</div>
           </div>
 
