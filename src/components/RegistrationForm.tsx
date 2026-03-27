@@ -62,12 +62,24 @@ export function RegistrationForm() {
     setIsSubmitting(true);
 
     const formData = new FormData(event.currentTarget);
+
     const data = {
       fullName : String(formData.get('fullName') || ''),
       email : String(formData.get('email') || ''),
       phone : String(formData.get('phone') || ''),
       status : String(formData.get('status') || ''),
       institution : String(formData.get('institution') || ''),
+      city : '',
+      challenges : String(formData.get('challenge') || ''),
+      role : String(formData.get('background') || ''),
+      hasIdea : 'לא',
+      ideaDescription : '',
+      wantsToLead : '',
+      teamPreference : String(formData.get('arrivingWithTeam') || ''),
+      partnerName : String(formData.get('teamDetails') || ''),
+      webinar1 : false,
+      webinar2 : false,
+      preferredTime : '',
       linkedin : String(formData.get('linkedin') || ''),
       participatedBefore : String(formData.get('participatedBefore') || ''),
       arrivingWithTeam : String(formData.get('arrivingWithTeam') || ''),
@@ -79,7 +91,22 @@ export function RegistrationForm() {
     };
 
     try {
-      console.log('Registration submitted:', data);
+      const response = await fetch('/api/register', {
+        method : 'POST',
+        headers : {
+          'Content-Type' : 'application/json',
+        },
+        body : JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('Error submitting form:', result);
+        alert('אירעה שגיאה בשליחת הטופס. נסו שוב.');
+        return;
+      }
+
       setSubmittedStatus(data.status);
       setIsSubmitted(true);
     } catch (error) {
