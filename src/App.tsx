@@ -74,8 +74,7 @@ const challenges = [
 
 const timeline = [
   { date : '29.3', title : 'פתיחת הרשמה', desc : 'פתיחת טופס ההרשמה לקהילת אייסף.' },
-  { date : '1.5', title : 'סגירת הרשמה', desc : 'המועד האחרון לשליחת הטופס.' },
-  { date : '6.5', title : 'אירוע מקדים', desc : 'מפגש מקדים לחיבור, היכרות, גיבוש צוותים וחידוד כיוונים.' },
+  { date : '1.5', title : 'סגירת הרשמה', desc : 'המועד האחרון לשליחת הטופס בחצות.' },
   { date : '28.5', title : 'אירוע האקתון מרכזי', desc : 'יום האקתון מלא של בנייה, מנטורים, דמו והצגה.' },
 ];
 
@@ -83,21 +82,21 @@ const dayFlow = [
   { title : 'פתיחה והיכרות', desc : 'התכנסות, מסגור האתגרים, היכרות עם הקהל והאווירה של היום.', icon : CalendarDays },
   { title : 'עבודה בצוותים', desc : 'צוותים בונים פתרונות לאתגרים שהוגדרו, עם זמן לחשיבה, בנייה ודיוק הרעיון.', icon : Users },
   { title : 'ליווי של מנטורים', desc : 'מנטורים יעזרו לחדד את הערך, הכיוון, המוצר והפיץ׳.', icon : Wrench },
-  { title : 'הצגה ופרס כספי', desc : 'בסוף היום הצוותים יציגו את הפתרון שלהם, והצוות הזוכה יקבל פרס כספי לטובת מימוש הרעיון.', icon : Trophy },
+  { title : 'הצגה ופרסים', desc : 'בסוף היום הצוותים יציגו את הפתרון שלהם, והצוות הזוכה יוכל לזכות בפרס ראשון של עד 20,000 ש״ח.', icon : Trophy },
 ];
 
 const infoCards = [
   { title : 'מה זה האקתון ISEF 2050?', desc : 'האקתון יומי לקהילת אייסף שמחבר בין אנשים, רעיונות ואתגרים משמעותיים. המטרה היא לבנות פתרונות אמיתיים סביב האתגרים שנציג, בליווי מנטורים ובאווירה של עשייה.' },
   { title : 'מי יכולות ויכולים להשתתף?', desc : 'אפשר להגיע כיחידים או כצוות מגובש. גם צוות קיים יכול להשתתף, כל עוד לפחות אחת או אחד מחברי הצוות שייכים לקהילת אייסף.' },
-  { title : 'איך ההאקתון עובד?', desc : 'נרשמים בטופס, מגיעים לאירוע המקדים ב-6.5 שבו ייבנו צוותים וייעשו חיבורים למי שמגיעים בלי צוות, ואז מגיעים לאירוע המרכזי ב-28.5 כדי לבנות פתרון ולהציג אותו.' },
+  { title : 'כמה זה עולה?', desc : 'דמי ההשתתפות הם 100 ש״ח לבוגרים. לסטודנטים יש 50% הנחה.' },
 ];
 
 const faqs = [
   { question : 'אפשר להגיע עם צוות קיים?', answer : 'כן. אפשר להגיע עם צוות מגובש, ובטופס כדאי לציין את שמות חברי הצוות ואת הפרטים הרלוונטיים עליהם.' },
   { question : 'מי יכול להשתתף?', answer : 'אפשר להשתתף גם כיחידים וגם כצוות. בצוות קיים מספיק שלפחות אחת או אחד מחברי הצוות יהיו מקהילת אייסף.' },
-  { question : 'מה קורה אם מגיעים בלי צוות?', answer : 'בשביל זה יש את האירוע המקדים ב-6.5. שם יתקיימו חיבורים, ציוותים והיכרות בין מי שמחפשים עם מי לעבוד.' },
   { question : 'צריך רעיון מוכן מראש?', answer : 'לא. אפשר להגיע גם בלי רעיון מלא. במהלך האירוע יהיו אתגרים מוגדרים, מנטורים וליווי שיסייעו לחדד כיוון ולבנות פתרון.' },
-  { question : 'יש פרס?', answer : 'כן. הצוות המנצח יזכה בפרס כספי לטובת מימוש הרעיון.' },
+  { question : 'כמה עולה להשתתף?', answer : 'דמי ההשתתפות הם 100 ש״ח לבוגרים. לסטודנטים יש 50% הנחה.' },
+  { question : 'יש פרס?', answer : 'כן. הצוות הזוכה יוכל לזכות בפרס ראשון של עד 20,000 ש״ח.' },
 ];
 
 function useCountdown(targetDate : Date) {
@@ -151,7 +150,7 @@ function ImageCarousel({ images, interval = 4500, className = '' } : { images : 
 }
 
 export default function App() {
-  const countdownTarget = useMemo(() => new Date('2026-05-06T00:00:00'), []);
+  const countdownTarget = useMemo(() => new Date('2026-05-01T00:00:00'), []);
   const timeLeft = useCountdown(countdownTarget);
   const [timelineProgress, setTimelineProgress] = useState(0);
   const [openChallengeId, setOpenChallengeId] = useState<number | null>(null);
@@ -183,7 +182,7 @@ export default function App() {
         <div className="container mx-auto flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
           <div className="text-center md:text-right">
             <div className="text-base font-black tracking-wide text-white md:text-lg">ההרשמה ל-ISEF 2050 נסגרת ב-1.5 בחצות</div>
-            <div className="text-sm text-blue-200 md:text-base">מומלץ למלא את הטופס מוקדם כדי להבטיח מקום</div>
+            <div className="text-sm text-blue-200 md:text-base">מספר המקומות מוגבל, מומלץ להירשם מוקדם</div>
           </div>
 
           <div className="flex flex-nowrap justify-center gap-1 overflow-x-auto pb-1 md:gap-3">
@@ -240,15 +239,22 @@ export default function App() {
                 צריך רק רצון לנסות
               </p>
 
-              <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-4">
-                <div className="w-full rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-white backdrop-blur-sm">
-                  <div className="text-lg font-bold text-blue-100 md:text-xl">אירוע האקתון המרכזי</div>
-                  <div className="text-3xl font-black">28.5 | 9:00-20:00</div>
-                  <div className="mt-3 flex items-center justify-center gap-2 text-base font-semibold text-blue-50 md:text-lg">
-                    <MapPin className="h-5 w-5" />
-                    <span>מרכז הארץ - מיקום מדויק יימסר בהמשך</span>
-                  </div>
+              <div className="w-full rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-white backdrop-blur-sm">
+                <div className="text-lg font-bold text-blue-100 md:text-xl">אירוע ההאקתון המרכזי</div>
+                <div className="text-3xl font-black">28.5 | 9:00-20:00</div>
+              
+                <div className="mt-3 flex items-center justify-center gap-2 text-base font-semibold text-blue-50 md:text-lg">
+                  <MapPin className="h-5 w-5" />
+                  <span>מרכז הארץ - מיקום מדויק יימסר בהמשך</span>
                 </div>
+              
+                <div className="mt-4 border-t border-white/15 pt-4 text-center">
+                  <div className="text-base font-bold text-blue-100 md:text-lg">דמי השתתפות</div>
+                  <div className="mt-1 text-lg font-black md:text-xl">בוגרים - 100 ש״ח | סטודנטים - 50% הנחה</div>
+                  <div className="mt-3 text-base font-bold text-blue-100 md:text-lg">פרס ראשון</div>
+                  <div className="mt-1 text-xl font-black md:text-2xl">עד 20,000 ש״ח</div>
+                </div>
+              </div>
 
                 <button
                   onClick={scrollToRegister}
