@@ -69,7 +69,7 @@ export default async function handler(req, res) {
       data.status || '',
       data.institution || '',
       data.city || '',
-      data.challenges || '',
+      Array.isArray(data.challenges) ? data.challenges.join(', ') : (data.challenges || ''),
       data.role || '',
       data.hasIdea || '',
       data.ideaDescription || '',
