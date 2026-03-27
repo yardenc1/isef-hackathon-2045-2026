@@ -1,240 +1,269 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
 
 const ISEF_BLUE = '#1B2F6E';
 const ISEF_ORANGE = '#F5821F';
 
-interface RegistrationFormData {
-  fullName: string;
-  phone: string;
-  email: string;
-  status: string;
-  institution: string;
-  city: string;
-  challenges: string[];
-  professionalBackground: string;
-  hasTeam: string;
-  // אם יש צוות
-  teamMembers?: string;
-  ideaDescription?: string;
-  // אם אין צוות
-  hasIdea?: string;
-  joinExistingTeam?: string;
-}
+const GRADUATES_PAYMENT_LINK = 'https://live.payme.io/sale/template/SALE1774-602562YM-A6WTYNLK-0Z6OPZLE';
+const STUDENTS_PAYMENT_LINK = 'https://live.payme.io/sale/template/SALE1774-6028450H-7MVRQMBF-0NIP3KXR';
 
-const inputStyle = {
-  width: '100%',
-  padding: '10px',
-  border: `2px solid ${ISEF_BLUE}`,
-  outline: 'none',
-  fontSize: '1rem',
-  fontFamily: 'inherit',
-};
-
-const labelStyle = {
-  display: 'block',
-  fontWeight: 'bold',
-  marginBottom: '6px',
-  color: ISEF_BLUE,
-};
-
-export const RegistrationForm = () => {
-  const { register, handleSubmit, watch, formState: { isSubmitting } } = useForm<RegistrationFormData>();
+export function RegistrationForm() {
   const [isSubmitted, setIsSubmitted] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-
-  const hasTeam = watch('hasTeam');
-  const hasIdea = watch('hasIdea');
-
-  const onSubmit = async (data: RegistrationFormData) => {
-    try {
-      setError(null);
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'שגיאה לא ידועה');
-      }
-      setIsSubmitted(true);
-    } catch (err: any) {
-      console.error('Error saving registration:', err);
-      setError('חלה שגיאה בשמירת הנתונים. אנא נסו שוב מאוחר יותר.');
-    }
-  };
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submittedStatus, setSubmittedStatus] = React.useState('');
 
   if (isSubmitted) {
+    const paymentLink = submittedStatus === 'סטודנט/ית אייסף' ? STUDENTS_PAYMENT_LINK : GRADUATES_PAYMENT_LINK;
+    const paymentLabel = submittedStatus === 'סטודנט/ית אייסף'
+      ? 'לתשלום 50 ש״ח לסטודנטים'
+      : 'לתשלום 100 ש״ח לבוגרים';
+
     return (
-      <div style={{ padding: '40px', textAlign: 'center', backgroundColor: '#f0fdf4', border: `2px solid #22c55e`, borderRadius: '12px', maxWidth: '600px', margin: '0 auto' }}>
-        <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🎉</div>
-        <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: ISEF_BLUE, marginBottom: '8px' }}>תודה שנרשמת!</h3>
-        <p style={{ color: '#166534' }}>הפרטים שלך התקבלו. ניצור קשר עם פרטים נוספים על מפגש חיבור הצוותים.</p>
+      <div
+        style={{
+          padding : '40px',
+          textAlign : 'center',
+          backgroundColor : '#f0fdf4',
+          border : '2px solid #22c55e',
+          borderRadius : '12px',
+          maxWidth : '600px',
+          margin : '0 auto',
+        }}
+      >
+        <div style={{ fontSize : '3rem', marginBottom : '12px' }}>🎉</div>
+        <h3 style={{ fontSize : '1.5rem', fontWeight : 'bold', color : ISEF_BLUE, marginBottom : '8px' }}>
+          תודה שנרשמת!
+        </h3>
+        <p style={{ color : '#166534', marginBottom : '20px', lineHeight : 1.6 }}>
+          הפרטים שלך התקבלו. כדי להשלים את ההרשמה יש לבצע תשלום לפי הסטטוס שבחרת.
+        </p>
+
+        <a
+          href={paymentLink}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            display : 'inline-block',
+            padding : '14px 24px',
+            textDecoration : 'none',
+            backgroundColor : ISEF_ORANGE,
+            color : ISEF_BLUE,
+            fontWeight : 'bold',
+            borderRadius : '12px',
+          }}
+        >
+          {paymentLabel}
+        </a>
       </div>
     );
   }
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '640px', margin: '0 auto', backgroundColor: 'white', padding: '40px', border: `2px solid ${ISEF_BLUE}`, boxShadow: `6px 6px 0 ${ISEF_ORANGE}` }}>
-      <div style={{ marginBottom: '32px' }}>
-        <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: ISEF_BLUE, borderBottom: `2px solid ${ISEF_ORANGE}`, paddingBottom: '10px', marginBottom: '8px' }}>שאלון הרשמה</h3>
-        <p style={{ fontSize: '0.875rem', color: '#52525b' }}>הטופס נועד להכיר אתכם, לשבץ לצוותים חזקים, ולוודא שלכולם יש חווית האקתון מקצועית וכיפית.</p>
-      </div>
+  const onSubmit = async (event : React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
 
-      {/* פרטים אישיים */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      fullName : String(formData.get('fullName') || ''),
+      email : String(formData.get('email') || ''),
+      phone : String(formData.get('phone') || ''),
+      status : String(formData.get('status') || ''),
+      institution : String(formData.get('institution') || ''),
+      linkedin : String(formData.get('linkedin') || ''),
+      participatedBefore : String(formData.get('participatedBefore') || ''),
+      arrivingWithTeam : String(formData.get('arrivingWithTeam') || ''),
+      teamDetails : String(formData.get('teamDetails') || ''),
+      challenge : String(formData.get('challenge') || ''),
+      background : String(formData.get('background') || ''),
+      motivation : String(formData.get('motivation') || ''),
+      notes : String(formData.get('notes') || ''),
+    };
+
+    try {
+      console.log('Registration submitted:', data);
+      setSubmittedStatus(data.status);
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('אירעה שגיאה בשליחת הטופס. נסו שוב.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form
+      onSubmit={onSubmit}
+      style={{
+        maxWidth : '900px',
+        margin : '0 auto',
+        backgroundColor : 'white',
+        borderRadius : '16px',
+        padding : '32px',
+        boxShadow : '0 10px 30px rgba(0,0,0,0.08)',
+      }}
+    >
+      <div style={{ display : 'grid', gap : '20px' }}>
         <div>
-          <label style={labelStyle}>שם מלא</label>
-          <input {...register('fullName', { required: true })} style={inputStyle} />
+          <label style={{ display : 'block', marginBottom : '8px', fontWeight : 'bold', color : ISEF_BLUE }}>
+            שם מלא
+          </label>
+          <input
+            name="fullName"
+            type="text"
+            required
+            style={inputStyle}
+          />
         </div>
-        <div>
-          <label style={labelStyle}>טלפון</label>
-          <input {...register('phone', { required: true })} style={inputStyle} />
+
+        <div style={twoColsStyle}>
+          <div>
+            <label style={labelStyle}>אימייל</label>
+            <input name="email" type="email" required style={inputStyle} />
+          </div>
+
+          <div>
+            <label style={labelStyle}>טלפון</label>
+            <input name="phone" type="tel" required style={inputStyle} />
+          </div>
         </div>
-        <div>
-          <label style={labelStyle}>אימייל</label>
-          <input {...register('email', { required: true })} type="email" style={inputStyle} />
+
+        <div style={twoColsStyle}>
+          <div>
+            <label style={labelStyle}>אני...</label>
+            <select name="status" required style={inputStyle}>
+              <option value="">בחר/י</option>
+              <option value="בוגר/ת אייסף">בוגר/ת אייסף</option>
+              <option value="סטודנט/ית אייסף">סטודנט/ית אייסף</option>
+              <option value="אחר">אחר</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={labelStyle}>מוסד לימודים / מקום עבודה</label>
+            <input name="institution" type="text" style={inputStyle} />
+          </div>
         </div>
+
         <div>
-          <label style={labelStyle}>סטטוס</label>
-          <select {...register('status', { required: true })} style={inputStyle}>
-            <option value="">-- בחר/י --</option>
-            <option value="בוגר/ת אייסף">בוגר/ת אייסף</option>
-            <option value="סטודנט/ית אייסף">סטודנט/ית אייסף</option>
-            <option value="אחר">אחר</option>
+          <label style={labelStyle}>LinkedIn</label>
+          <input name="linkedin" type="url" style={inputStyle} />
+        </div>
+
+        <div style={twoColsStyle}>
+          <div>
+            <label style={labelStyle}>השתתפת בעבר בהאקתון?</label>
+            <select name="participatedBefore" style={inputStyle}>
+              <option value="">בחר/י</option>
+              <option value="כן">כן</option>
+              <option value="לא">לא</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={labelStyle}>מגיע/ה עם צוות?</label>
+            <select name="arrivingWithTeam" style={inputStyle}>
+              <option value="">בחר/י</option>
+              <option value="כן">כן</option>
+              <option value="לא">לא</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label style={labelStyle}>אם כן, פרטי צוות / שמות חברים</label>
+          <textarea name="teamDetails" rows={3} style={textareaStyle} />
+        </div>
+
+        <div>
+          <label style={labelStyle}>באיזה אתגר תרצה/י להתמקד?</label>
+          <select name="challenge" style={inputStyle}>
+            <option value="">בחר/י</option>
+            <option value="רפואה ובריאות דיגיטלית">רפואה ובריאות דיגיטלית</option>
+            <option value="בריאות, רווחה ואיכות חיים">בריאות, רווחה ואיכות חיים</option>
+            <option value="חינוך וכלים לדור הבא">חינוך וכלים לדור הבא</option>
+            <option value="שירותים ציבוריים חכמים (GovTech)">שירותים ציבוריים חכמים (GovTech)</option>
+            <option value="חוסן קהילתי ושייכות">חוסן קהילתי ושייכות</option>
+            <option value="קיימות ותשתיות חיים">קיימות ותשתיות חיים</option>
           </select>
         </div>
+
         <div>
-          <label style={labelStyle}>מוסד לימודים / מקום עבודה</label>
-          <input {...register('institution', { required: true })} style={inputStyle} />
+          <label style={labelStyle}>רקע מקצועי / אקדמי</label>
+          <textarea name="background" rows={4} style={textareaStyle} />
         </div>
+
         <div>
-          <label style={labelStyle}>עיר מגורים</label>
-          <input {...register('city', { required: true })} style={inputStyle} />
+          <label style={labelStyle}>למה מעניין אותך להשתתף?</label>
+          <textarea name="motivation" rows={4} style={textareaStyle} />
         </div>
-      </div>
 
-      {/* אתגרים */}
-      <div style={{ marginBottom: '24px' }}>
-        <label style={labelStyle}>איזה אתגר הכי מעניין אותך?</label>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {['בריאות ורווחת האדם (HealthTech)', 'חינוך וכלים לדור הבא', 'חוסן קהילתי ושייכות', 'שירותים ציבוריים חכמים (GovTech)', 'קיימות ותשתיות חיים', 'פתוח / אחר'].map(c => (
-            <label key={c} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-              <input type="checkbox" value={c} {...register('challenges')} style={{ width: '16px', height: '16px', accentColor: ISEF_ORANGE }} />
-              <span>{c}</span>
-            </label>
-          ))}
+        <div>
+          <label style={labelStyle}>הערות נוספות</label>
+          <textarea name="notes" rows={3} style={textareaStyle} />
         </div>
-      </div>
 
-      {/* רקע מקצועי */}
-      <div style={{ marginBottom: '24px' }}>
-        <label style={labelStyle}>רקע מקצועי / תחום התמחות</label>
-        <textarea
-          {...register('professionalBackground', { required: true })}
-          placeholder="ספר/י בקצרה על הרקע המקצועי שלך, התפקיד הנוכחי, ומה אתה/את מביא/ה לצוות"
-          style={{ ...inputStyle, height: '80px', resize: 'vertical' }}
-        />
-      </div>
-
-      {/* יש צוות? */}
-      <div style={{ marginBottom: '24px' }}>
-        <label style={labelStyle}>האם יש לך צוות קיים?</label>
-        <div style={{ display: 'flex', gap: '24px' }}>
-          {['כן', 'לא'].map(v => (
-            <label key={v} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-              <input type="radio" value={v} {...register('hasTeam', { required: true })} style={{ width: '16px', height: '16px', accentColor: ISEF_ORANGE }} />
-              <span style={{ fontWeight: 'bold' }}>{v}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* אם יש צוות */}
-      {hasTeam === 'כן' && (
-        <div style={{ backgroundColor: '#EFF6FF', padding: '20px', border: `2px solid ${ISEF_BLUE}`, marginBottom: '24px' }}>
-          <p style={{ fontWeight: 'bold', color: ISEF_BLUE, marginBottom: '16px' }}>מעולה! ספר/י לנו על הצוות:</p>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={labelStyle}>שמות חברי הצוות</label>
-            <textarea
-              {...register('teamMembers')}
-              placeholder="שם מלא, תפקיד — שם מלא, תפקיד"
-              style={{ ...inputStyle, height: '70px', resize: 'vertical' }}
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>תיאור הרעיון / הבעיה שאתם עובדים עליה</label>
-            <textarea
-              {...register('ideaDescription')}
-              placeholder="תאר/י בקצרה את הבעיה ואת הפתרון שאתם מציעים"
-              style={{ ...inputStyle, height: '80px', resize: 'vertical' }}
-            />
+        <div
+          style={{
+            backgroundColor : '#FFF8F0',
+            border : `1px solid rgba(27,47,110,0.12)`,
+            borderRadius : '12px',
+            padding : '16px',
+            textAlign : 'center',
+          }}
+        >
+          <div style={{ fontWeight : 'bold', color : ISEF_BLUE, marginBottom : '6px' }}>דמי השתתפות</div>
+          <div style={{ color : '#52525b', lineHeight : 1.7 }}>
+            בוגרים - 100 ש״ח<br />
+            סטודנטים - 50 ש״ח
           </div>
         </div>
-      )}
 
-      {/* אם אין צוות */}
-      {hasTeam === 'לא' && (
-        <div style={{ backgroundColor: '#FFF7ED', padding: '20px', border: `2px solid ${ISEF_ORANGE}`, marginBottom: '24px' }}>
-          <p style={{ fontWeight: 'bold', color: ISEF_BLUE, marginBottom: '16px' }}>נחבר אותך לצוות מושלם במפגש החיבור 🤝</p>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={labelStyle}>האם יש לך רעיון לפרויקט?</label>
-            <div style={{ display: 'flex', gap: '24px' }}>
-              {['כן', 'לא'].map(v => (
-                <label key={v} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <input type="radio" value={v} {...register('hasIdea')} style={{ width: '16px', height: '16px', accentColor: ISEF_ORANGE }} />
-                  <span>{v}</span>
-                </label>
-              ))}
-            </div>
-            {hasIdea === 'כן' && (
-              <textarea
-                {...register('ideaDescription')}
-                placeholder="תאר/י את הרעיון בשתי שורות"
-                style={{ ...inputStyle, height: '70px', resize: 'vertical', marginTop: '12px' }}
-              />
-            )}
-          </div>
-          <div>
-            <label style={labelStyle}>האם תהיה/י מוכן/ה להצטרף לצוות קיים?</label>
-            <div style={{ display: 'flex', gap: '24px' }}>
-              {['כן', 'לא'].map(v => (
-                <label key={v} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <input type="radio" value={v} {...register('joinExistingTeam')} style={{ width: '16px', height: '16px', accentColor: ISEF_ORANGE }} />
-                  <span>{v}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <div style={{ padding: '16px', backgroundColor: '#FEF2F2', border: '2px solid #ef4444', color: '#991b1b', fontWeight: 'bold', marginBottom: '16px' }}>
-          {error}
-        </div>
-      )}
-
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        style={{
-          width: '100%',
-          padding: '16px',
-          fontSize: '1.25rem',
-          fontWeight: 'bold',
-          cursor: isSubmitting ? 'not-allowed' : 'pointer',
-          opacity: isSubmitting ? 0.6 : 1,
-          backgroundColor: ISEF_BLUE,
-          color: 'white',
-          border: `3px solid ${ISEF_BLUE}`,
-          fontFamily: 'inherit',
-          transition: 'all 0.2s',
-        }}
-      >
-        {isSubmitting ? 'שולח...' : 'שלח הרשמה ✓'}
-      </button>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          style={{
+            border : 'none',
+            borderRadius : '14px',
+            padding : '16px 24px',
+            backgroundColor : ISEF_ORANGE,
+            color : ISEF_BLUE,
+            fontSize : '1.1rem',
+            fontWeight : 'bold',
+            cursor : isSubmitting ? 'not-allowed' : 'pointer',
+            opacity : isSubmitting ? 0.7 : 1,
+          }}
+        >
+          {isSubmitting ? 'שולח...' : 'שליחת טופס'}
+        </button>
+      </div>
     </form>
   );
+}
+
+const labelStyle : React.CSSProperties = {
+  display : 'block',
+  marginBottom : '8px',
+  fontWeight : 'bold',
+  color : ISEF_BLUE,
+};
+
+const inputStyle : React.CSSProperties = {
+  width : '100%',
+  padding : '12px 14px',
+  borderRadius : '10px',
+  border : '1px solid #d4d4d8',
+  fontSize : '1rem',
+  boxSizing : 'border-box',
+};
+
+const textareaStyle : React.CSSProperties = {
+  ...inputStyle,
+  resize : 'vertical',
+  minHeight : '90px',
+};
+
+const twoColsStyle : React.CSSProperties = {
+  display : 'grid',
+  gridTemplateColumns : 'repeat(auto-fit, minmax(240px, 1fr))',
+  gap : '16px',
 };
