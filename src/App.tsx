@@ -291,52 +291,54 @@ export default function App() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden py-16 md:py-20" style={{ backgroundColor : ISEF_BLUE }}>
-        <div className="absolute left-8 top-28 hidden h-64 w-64 overflow-hidden rounded-[32px] border-4 opacity-20 lg:block" style={{ borderColor : ISEF_ORANGE }}>
-          <img src="/images/event-3.jpeg" alt="" className="h-full w-full object-cover" />
-        </div>
-      
-        <div className="container relative z-10 mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="text-5xl font-black text-white md:text-6xl">לו״ז הדרך להאקתון</h2>
-          </div>
-      
-          <div ref={timelineRef} className="relative mx-auto max-w-4xl">
-            <div className="absolute right-4 top-0 h-full w-[2px] rounded-full bg-white/15 md:right-auto md:left-1/2 md:-translate-x-1/2 md:w-1" />
-            <div
-              className="absolute right-4 top-0 w-[2px] rounded-full transition-all duration-200 md:right-auto md:left-1/2 md:-translate-x-1/2 md:w-1"
-              style={{ backgroundColor : ISEF_ORANGE, height : `${timelineProgress * 100}%` }}
-            />
-      
-            <div className="space-y-6 md:space-y-8">
-              {timeline.map((item) => (
-                <div key={item.title} className="relative pr-12 md:pr-0">
-                  <div className="absolute right-[9px] top-1/2 -translate-y-1/2 md:right-auto md:left-1/2 md:-translate-x-1/2">
-                    <div
-                      className="h-4 w-4 rounded-full border-2 border-white shadow-[0_0_0_4px_rgba(245,130,31,0.15)] md:h-5 md:w-5 md:border-4"
-                      style={{ backgroundColor : ISEF_ORANGE }}
-                    />
-                  </div>
-      
-                  <div className="mr-0 md:mr-auto md:max-w-[calc(50%-2rem)]">
-                    <div className="flex min-h-[150px] flex-col justify-center rounded-3xl bg-white/8 p-6 text-right backdrop-blur-sm md:min-h-[190px] md:p-7">
-                      <div className="mb-2 text-xl font-black md:text-2xl" style={{ color : ISEF_ORANGE }}>
-                        {item.date}
-                      </div>
-                      <h3 className="mb-2 text-2xl font-black text-white md:text-3xl">
-                        {item.title}
-                      </h3>
-                      <p className="text-lg leading-relaxed text-blue-100">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
+     <section className="relative overflow-hidden py-16 md:py-20" style={{ backgroundColor : ISEF_BLUE }}>
+  <div className="absolute left-8 top-28 hidden h-64 w-64 overflow-hidden rounded-[32px] border-4 opacity-20 lg:block" style={{ borderColor : ISEF_ORANGE }}>
+    <img src="/images/event-3.jpeg" alt="" className="h-full w-full object-cover" />
+  </div>
+
+  <div className="container relative z-10 mx-auto px-4">
+    <div className="mb-12 text-center">
+      <h2 className="text-5xl font-black text-white md:text-6xl">לו״ז הדרך להאקתון</h2>
+    </div>
+
+    <div ref={timelineRef} className="relative mx-auto max-w-5xl">
+      <div className="absolute right-4 top-0 h-full w-[2px] rounded-full bg-white/15 md:right-1/2 md:w-1 md:translate-x-1/2" />
+      <div
+        className="absolute right-4 top-0 w-[2px] rounded-full transition-all duration-200 md:right-1/2 md:w-1 md:translate-x-1/2"
+        style={{ backgroundColor : ISEF_ORANGE, height : `${timelineProgress * 100}%` }}
+      />
+
+      <div className="space-y-6 md:space-y-8">
+        {timeline.map((item, index) => (
+          <div key={item.title} className="relative pr-12 md:grid md:grid-cols-2 md:gap-8 md:pr-0">
+            <div className={`${index % 2 === 0 ? 'md:pr-16' : 'md:order-2 md:pl-16'} text-right`}>
+              <div className="flex min-h-[170px] flex-col justify-center rounded-3xl bg-white/8 p-6 backdrop-blur-sm md:min-h-[190px] md:p-7">
+                <div className="mb-2 text-xl font-black md:text-2xl" style={{ color : ISEF_ORANGE }}>
+                  {item.date}
                 </div>
-              ))}
+                <h3 className="mb-2 text-2xl font-black text-white md:text-3xl">
+                  {item.title}
+                </h3>
+                <p className="text-lg leading-relaxed text-blue-100">
+                  {item.desc}
+                </p>
+              </div>
             </div>
+
+            <div className="absolute right-[9px] top-1/2 -translate-y-1/2 md:absolute md:right-1/2 md:top-1/2 md:translate-x-1/2 md:-translate-y-1/2">
+              <div
+                className="h-4 w-4 rounded-full border-2 border-white shadow-[0_0_0_4px_rgba(245,130,31,0.15)] md:h-5 md:w-5 md:border-4"
+                style={{ backgroundColor : ISEF_ORANGE }}
+              />
+            </div>
+
+            <div className={`hidden md:block ${index % 2 === 0 ? 'md:order-2' : ''}`} />
           </div>
-        </div>
-      </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
 
       <section className="bg-zinc-50 py-16 md:py-20">
         <div className="container mx-auto px-4">
