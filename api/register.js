@@ -9,17 +9,24 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error : 'Method not allowed' });
 
   try {
+    console.log('handler started');
+
     const data = req.body;
+    console.log('incoming data keys:', Object.keys(data || {}));
+    console.log('incoming status:', data?.status);
 
     const client_email = process.env.GOOGLE_CLIENT_EMAIL;
     const private_key = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
     const sheetId = process.env.GOOGLE_SHEET_ID;
 
+    console.log('has client email:', !!client_email);
+    console.log('has private key:', !!private_key);
+    console.log('has sheet id:', !!sheetId);
+
     if (!client_email || !private_key || !sheetId) {
       return res.status(500).json({ error : 'Missing Google environment variables' });
     }
 
-    // 🔐 JWT יציב
     const token = jwt.sign(
       {
         iss : client_email,
@@ -42,15 +49,15 @@ export default async function handler(req, res) {
     });
 
     const tokenData = await tokenRes.json();
+    console.log('token response:', tokenData);
 
     if (!tokenData.access_token) {
-      console.error('❌ Token error:', tokenData);
-      return res.status(500).json({ error : 'Token failed' });
+      console.error('Token error:', tokenData);
+      return res.status(500).json({ error : 'Token failed', details : tokenData });
     }
 
     const accessToken = tokenData.access_token;
 
-    // 💰 לוגיקת תשלום
     const graduatesLink = 'https://live.payme.io/sale/template/SALE1774-602901WM-MDBG3GV8-65VKIUXZ';
     const studentsLink = 'https://live.payme.io/sale/template/SALE1774-6028450H-7MVRQMBF-0NIP3KXR';
 
@@ -85,8 +92,10 @@ export default async function handler(req, res) {
       'ממתין לתשלום',
     ];
 
+    console.log('row to append:', row);
+
     const appendRes = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:U1:append?valueInputOption=USER_ENTERED`,
+      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:U:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
       {
         method : 'POST',
         headers : {
@@ -98,20 +107,22 @@ export default async function handler(req, res) {
     );
 
     const result = await appendRes.json();
+    console.log('append response ok:', appendRes.ok);
+    console.log('append response body:', result);
 
     if (!appendRes.ok) {
-      console.error('❌ Sheets error:', result);
-      return res.status(500).json({ error : 'Sheets failed' });
+      console.error('Sheets error:', result);
+      return res.status(500).json({ error : 'Sheets failed', details : result });
     }
 
     return res.status(200).json({
       success : true,
       paymentAmount,
       paymentLink,
+      sheetsResult : result,
     });
-
   } catch (err) {
-    console.error('🔥 Handler crash:', err);
+    console.error('Handler crash:', err);
     return res.status(500).json({ error : err.message });
   }
 }
